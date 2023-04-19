@@ -35,6 +35,13 @@ Application startup time is around 5-15 seconds varying on your computer.
 - You may need to enter `Column Name` which contains the ID. By default required value will be provided.
 - Press the `Download SDF` or `Write SMILES` button. Download progress will be shown to the top of the button. After completing the task, `Completed` text will be shown.
 
+## Demo Screenshot of Excel
+
+![ss_imppat](ss_imppat.png)
+
+![ss_swiss](ss_swiss.png)
+
+![ss_pubchem](ss_pubchem.png)
 
 ## Problems
 ~~1. two word can't be used in xlsx file name. ex: "curcuma longa.xlsx" can't be used; instead use one word name like "curcuma.xlsx".~~
