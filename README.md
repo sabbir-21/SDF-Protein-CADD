@@ -3,24 +3,27 @@ The CADD-Helper is designed to facilitate the download of 3D SDF drug files for 
 
 ## Features
 
-- SDF Download (IMPPAT, SwissSimilarity, Pubchem)
-- ADMET accelerator (SwissADME, pkcsm) [pubchem]
-- 2D Structure png download [pubchem]
-- Retrieve Chemical name [pubchem]
+- SDF Download by ID (IMPPAT, SwissSimilarity, PubChem)
+- SDF Download by SMILES (PubChem)
+- ADMET accelerator by PubChem ID (SwissADME, pkcsm)
+- 2D Structure png download by ID (IMPPAT, DrugBank, PubChem)
+- Retrieve Chemical name by PubChem ID
 
-![main_v1.5](v1.5.png)
+![main_v1.6](v1.6.png)
 
 ## Installation
-Download via cmd. Copy the code, paste it on CMD and hit enter.
+Download via cmd. Copy the code, paste it on CMD and hit enter. It will be download in Desktop.
 
 ```
-cd Desktop & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.5/CADD_Helper_v1.5.exe
+cd Desktop & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.6/CADD_Helper_v1.6.exe
 ```
 Or
 
 Download from [Releases](https://github.com/sabbir-21/SDF-Protein-CADD/releases/latest)
 
 [![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/sabbir-21/SDF-Protein-CADD/releases/latest)
+
+[![](https://img.shields.io/github/v/release/sabbir-21/SDF-Protein-CADD?style=for-the-badge)](https://github.com/sabbir-21/SDF-Protein-CADD/releases) [![](https://img.shields.io/github/downloads/sabbir-21/SDF-Protein-CADD/total?style=for-the-badge)](https://github.com/sabbir-21/SDF-Protein-CADD/releases) 
 
 - Its a portable Application. No need to install it. Just double click to run.
 - This application is not free for all. You need to purchase it from me. Purchase licence key from [Buy Now](https://sabbir-21.github.io/portfolio/buy.html)
@@ -44,17 +47,16 @@ Application startup time is around 5-15 seconds varying on your computer.
 ![ss_pubchem](ss_pubchem.png)
 
 ## Problems
-~~1. two word can't be used in xlsx file name. ex: "curcuma longa.xlsx" can't be used; instead use one word name like "curcuma.xlsx".~~
 
-~~2. if xlsx files first cell is empty, will download an empty sdf file. You need to delete that empty file later.~~
-1. App can't be opened offline. App is fully based on Online. Internet connection problem may `crash` the app.
+1. App can't be opened offline. App is fully based on Online. Internet connection problem may `crash` the app. `Re-Opening the app may solve the problem`
 2. Windows defender detects the app as malware. So you have to turn off windows defender while downloading the app. See details [here ](https://stackoverflow.com/questions/43777106/program-made-with-pyinstaller-now-seen-as-a-trojan-horse-by-avg) why this happens.
+`Downloading with CMD may solve the problem.`
 
 ## Language
 Built with  [![Windows](https://www.python.org/static/favicon.ico
 )](https://www.python.org/)
 
 ## License
-MIT
+© Sabbir Ahmed
 
 **Paid Software, Yeah!**
