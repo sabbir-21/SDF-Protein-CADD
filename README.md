@@ -59,3 +59,4 @@ Built with  [![Windows](https://www.python.org/static/favicon.ico)](https://www.
 © Sabbir Ahmed
 
 **Paid Software, Yeah!**
+.
