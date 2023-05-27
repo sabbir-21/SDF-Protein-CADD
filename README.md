@@ -53,8 +53,7 @@ Application startup time is around 5-15 seconds varying on your computer.
 `Downloading with CMD may solve the problem.`
 
 ## Language
-Built with  [![Windows](https://www.python.org/static/favicon.ico
-)](https://www.python.org/)
+Built with  [![Windows](https://www.python.org/static/favicon.ico)](https://www.python.org/)
 
 ## License
 © Sabbir Ahmed
