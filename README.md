@@ -3,19 +3,20 @@ The CADD-Helper is designed to facilitate the download of 3D SDF drug files for 
 
 ## Features
 
-- SDF Download by ID (IMPPAT, SwissSimilarity, PubChem)
+- SDF Download by ID (IMPPAT, SwissSimilarity, PubChem, Drugbank)
+- SDF Download by URL (IMPPAT)
 - SDF Download by SMILES (PubChem)
 - ADMET accelerator by PubChem ID (SwissADME, pkcsm)
 - 2D Structure png download by ID (IMPPAT, DrugBank, PubChem)
 - Retrieve Chemical name by PubChem ID
 
-![main_v1.7](v1.7.png)
+![main_v1.8](v1.8.png)
 
 ## Installation
 Download via cmd. Copy the code, paste it on CMD and hit enter. It will be download in Desktop.
 
 ```
-cd Desktop & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.7/CADD_Helper_v1.7.exe
+cd Desktop & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.8/CADD_Helper_v1.8.exe
 ```
 Or
 
