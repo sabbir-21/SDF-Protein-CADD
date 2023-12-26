@@ -1,12 +1,12 @@
-from tkinter import Tk, Canvas, Entry, Button, PhotoImage, StringVar, Radiobutton, filedialog, messagebox
-from tkinter import *
+from tkinter import Tk, Canvas, Entry, Button, PhotoImage, StringVar, Radiobutton, filedialog, messagebox, Menu
+#from tkinter import *
 import os, sys, time, requests, json, csv
 from webbrowser import open_new_tab
 from openpyxl import load_workbook, Workbook
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
-
+'''
 try:
     import pyi_splash
     pyi_splash.update_text('UI Loaded ...')
@@ -14,17 +14,26 @@ try:
 except:
     pass
 
+'''
 
+'''
+DUMMY code
 if hasattr(sys, '_MEIPASS'):
     image_folder = sys._MEIPASS
 else:
     image_folder = os.path.dirname(__file__)
-'''
-image_folder = os.getcwd()+r'\assets'
+
+#image_folder = os.getcwd()+r'\assets'
 '''
 
+FOLDER = r'C:\Key'
+os.makedirs(FOLDER, exist_ok=True)
+working_dir = f"C:/Users/{os.getenv("UserName")}/Documents/CADD_Helper"
+os.makedirs(working_dir, exist_ok=True)
+ACTIVATION_FILE = "C:/Key/activation.txt"
+
 try:
-    
+    '''
     #response = requests.get('https://raw.githubusercontent.com/sabbir-21/Licence-manager/main/licence.txt')
     response = requests.get('https://gitlab.com/sabbir299/cadd-licence/-/raw/main/licence.txt')
     license = json.loads(response.text)
@@ -32,19 +41,17 @@ try:
     vv = license['version']
     '''
     ACTIVATION_CODE = "SABBIR-AHMED-0000-0001"
-    vv = "Version: 1.6"
-    '''
+    vv = "Version: 1.8"
+    
 
 except Exception as e:
     import datetime
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    with open(f"error.log", "a") as file:
+    with open(f"{working_dir}/error.txt", "a") as file:
         file.write(timestamp+'\n'+str(e)+'\n'+50* '='+'\n')
     exit()
 
-FOLDER = r'C:\Key'
-os.makedirs(FOLDER, exist_ok=True)
-ACTIVATION_FILE = FOLDER+ r"\activation.txt"
+
 
 '''
 if os.path.exists('list.xlsx'):
@@ -55,25 +62,63 @@ window = Tk()
 window.geometry("860x520")
 window.title('CADD Helper | by Sabbir Ahmed')
 window.resizable(0, 0)
-photo = PhotoImage(file=os.path.join(image_folder, 'folder.png'))
+photo = PhotoImage(file=os.path.join('folder.png'))
 window.iconphoto(False, photo)
 window.configure(bg = "#3A7FF6")
+menubar = Menu(window)
+window.config(menu=menubar)
 
 #canvas = Canvas(window,bg = "#3A7FF6",height = 520,width = 860,bd = 0,highlightthickness = 0,relief = "ridge")
 #canvas.place(x = 0, y = 0)
 #================================Strings=============================
 app_title = "Welcome to CADD Helper App"
 app_description = "CADD Helper can be used to\ndownload sdf files from imppat\nand swisssimilarity and others\nonly one click."
-app_version = "Version: 1.7"
+app_version = "Version: 1.8"
+app_dev_url = "https://www.facebook.com/sabbir299"
+app_dev_about = f"Sabbir Ahmed\nPharmacy 6th batch\nMawlana Bhashani Science and Technology University\n\n{app_dev_url}"
+
 #====================================================================
 
 def callback(urlpersonal):
    open_new_tab(urlpersonal)
-def open_popup():
-    messagebox.showinfo("Developer Info", "Sabbir Ahmed\nPharmacy 6th batch\nMawlana Bhashani Science and Technology University\n\nhttps://www.facebook.com/sabbir299")
+
+def open_popup(pop, info):
+    messagebox.showinfo(pop, info)
+
+def check_version():
+    if vv==app_version:
+        open_popup("Update Info", f"You are using the latest version\n{vv}")
+    else:
+        open_popup("Update Info", f"Update Available\n{vv}")
+
+def update_apply():
+    os.popen(f"cd Downloads & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.8/CADD_Helper_v1.8.exe & CADD_Helper_v1.8.exe")
+
+def chosecsv():
+    try:
+        fileread=filedialog.askopenfilename(filetypes =[('CSV Files', '*.csv')])
+        drugbank_ids = []
+        with open(fileread, 'r') as csvfile:
+            csvreader = csv.DictReader(csvfile, delimiter=';')
+            for row in csvreader:
+                drugbank_ids.append(row['DrugBank ID'])
+
+        # Create a new Excel workbook
+        workbook = Workbook()
+        worksheet = workbook.active
+
+        # Write data to the Excel worksheet
+        for row_index, drugbank_id in enumerate(drugbank_ids, start=1):
+            worksheet.cell(row=row_index, column=1, value=drugbank_id)
+
+        # Save the workbook to an Excel file
+        workbook.save(working_dir+"/csvToExcel.xlsx")
+        open_popup("CSV to Excel", f"CSV File converted to Excel\n{working_dir}/csvToExcel.xlsx")
+    except FileNotFoundError:
+        pass
 
 def mainApp():
-    ###===================   main App =====================
+    ###==========================================   main App ================================================
     canvas = Canvas(window,bg = "#3A7FF6",height = 520,width = 860,bd = 0,highlightthickness = 0,relief = "ridge")
     canvas.place(x = 0, y = 0)
     canvas.create_rectangle(431,0,860,520,fill="#FFFFFF",outline="")
@@ -82,28 +127,54 @@ def mainApp():
     canvas.create_text(40,40,anchor="nw",text=app_title,fill="#FCFCFC",font=("Roboto Bold", -24))
     #canvas.create_text(140,100,anchor="nw",text="Select Option",fill="#FCFCFC",font=("Roboto Bold", -18))
     selected_option = StringVar(value="imppat")
+
+    # File menu
+    filemenu = Menu(menubar, tearoff=0)
+    #filemenu.add_command(label="New", command=lambda: print('New'))
+    filemenu.add_command(label="Open Excel", command=lambda: choseExcel())
+    filemenu.add_command(label="CSV to Excel", command=lambda: chosecsv())
+    filemenu.add_separator()
+    filemenu.add_command(label="Exit", command=window.quit)
+    menubar.add_cascade(label='File', menu=filemenu)
+    # Edit menu
+    helpmenu = Menu(menubar, tearoff=0)
+    #helpmenu.add_command(label="Welcome", command=lambda: print('Welcome'))
+    helpmenu.add_command(label="Documentation", command=lambda: callback("https://github.com/sabbir-21/SDF-Protein-CADD"))
+    helpmenu.add_command(label="Check for Updates", command=lambda: check_version())
+    helpmenu.add_command(label="Update now", command=lambda: update_apply())
+    menubar.add_cascade(label='Help', menu=helpmenu)
+
+    # About menu
+    menubar.add_command(label='About', command=lambda: (open_popup("Developer Info",app_dev_about),callback(app_dev_url)))
+    #End menu=================================================================================================
     ver = canvas.create_text(40,380,anchor="nw",text=app_version,fill="#FCFCFC",font=("Actor Regular", -14))
-    if vv==app_version:
-        ver_check = canvas.create_text(140,380,anchor="nw",text="Latest version",fill="#FCFCFC",font=("Actor Regular", -14))
-    else:
-        ver_check = canvas.create_text(140,380,anchor="nw",text="Update available",fill="#FCFCFC",font=("Actor Regular", -14))
-        def blink_update():
-            canvas.itemconfigure(ver_check, state=HIDDEN if canvas.itemcget(ver_check, "state") == NORMAL else NORMAL)
-            canvas.after(800, blink_update)
-        blink_update()
-    canvas.tag_bind(ver_check, "<Button-1>", lambda e: callback("https://github.com/sabbir-21/SDF-Protein-CADD"))
+    #Version check
+    '''
+    def check_version_canvas():
+        if vv==app_version:
+            ver_check = canvas.create_text(140,380,anchor="nw",text="Latest version",fill="#FCFCFC",font=("Actor Regular", -14))
+            open_popup("Update Info", f"You are using the latest version\n{vv}")
+        else:
+            ver_check = canvas.create_text(140,380,anchor="nw",text="Update available",fill="#FCFCFC",font=("Actor Regular", -14))
+            def blink_update():
+                canvas.itemconfigure(ver_check, state='HIDDEN' if canvas.itemcget(ver_check, "state") == 'NORMAL' else 'NORMAL')
+                canvas.after(800, blink_update)
+            blink_update()
+    '''
+    #check_version()
+    #End version check =====================================================================================
+    #canvas.tag_bind(ver_check, "<Button-1>", lambda e: callback("https://github.com/sabbir-21/SDF-Protein-CADD"))
     #canvas.create_text(165,380,anchor="nw",text=VERSION,fill="#FCFCFC",font=("Actor Regular", 14 * -1))
     credit = canvas.create_text(40,407,anchor="nw",text="Developed by: SABBIR AHMED",fill="#FCFCFC",font=("Actor Regular", -20))
-    canvas.tag_bind(credit, "<Button-1>", lambda e: open_popup())
-    #canvas.tag_bind(credit, "<Enter>", lambda e: open_popup())
-    #middle mouse
-    canvas.tag_bind(credit, "<Button>", lambda e: open_popup())
+    canvas.tag_bind(credit, "<Button-1>", lambda e: open_popup("Developer Info",app_dev_about))
+    canvas.tag_bind(credit, "<Button>", lambda e: open_popup("Developer Info",app_dev_about))
 
-    link = canvas.create_text(70,446,anchor="nw",text="https://facebook.com/sabbir299",fill="#FFFFFF",font=("Adamina Regular", -15))
-    canvas.tag_bind(link, "<Button-1>", lambda e: callback("https://www.facebook.com/sabbir299"))
+    link = canvas.create_text(55,446,anchor="nw",text=app_dev_url,fill="#FFFFFF",font=("Adamina Regular", -15))
+    canvas.tag_bind(link, "<Button-1>", lambda e: callback(app_dev_url))
+    canvas.tag_bind(link, "<Button>", lambda e: callback(app_dev_url))
     #Right Side
     button_1 = Button(text='Select Excel sheet',command=lambda: choseExcel(), fg='white', bg='#3A7FF6', bd=0)
-    button_1.place(x=565,y=133,width=146,height=36)
+    #button_1.place(x=565,y=133,width=146,height=36)
 
     csv_button = Button(text='CSV',command=lambda: chosecsv(), fg='white', bg='#3A7FF6', bd=0)
     csv_button.place(x=745,y=133,width=36,height=36)
@@ -124,43 +195,20 @@ def mainApp():
     entry_1.delete(0, 'end')
     entry_1.insert(0, 'https://cb.imsc.res.in/imppat/phytochemical/')
 
-    entrytwo = canvas.create_text(492,266,anchor="nw",text="Column Name containg ID/CID",fill="#000000",font=("Actor Regular", -13))
+    entrytwo = canvas.create_text(492,266,anchor="nw",text="",fill="#000000",font=("Actor Regular", -13))
     #entrytwo_image = canvas.create_image(618,309,image=canvas.main_image_1)
     entry_2 = Entry(bd=0,bg="#F1F1F1",fg="#393b4f",highlightthickness=0)
-    entry_2.place(x=491,y=286,width=294,height=44)
-    entry_2.place_forget()
+    #entry_2.place(x=491,y=286,width=294,height=44)
     #canvas.itemconfigure(entryone, text="IMPPAT Plant URL")
-    canvas.itemconfigure(entrytwo, text="")
-    #entry_2.insert(0, 'C')
+    #canvas.itemconfigure(entrytwo, text="A")
+    #entry_2.insert(0, 'A')
 
     showText2 = canvas.create_text(492,356,anchor="nw",text="",fill="#000000",font=("Actor Regular", -13))
     showText = canvas.create_text(492,376,anchor="nw",text="",fill="#000000",font=("Actor Regular", -13))
     button_2 = Button(text='Download SDF',command=lambda: dl_impaat(), fg='white', bg='#3A7FF6', bd=0)
     button_2.place(x=565,y=412,width=146,height=36)
 
-    def chosecsv():
-        try:
-            fileread=filedialog.askopenfilename(filetypes =[('CSV Files', '*.csv')])
-            drugbank_ids = []
-            with open(fileread, 'r') as csvfile:
-                csvreader = csv.DictReader(csvfile, delimiter=';')
-                for row in csvreader:
-                    drugbank_ids.append(row['DrugBank ID'])
 
-            # Create a new Excel workbook
-            workbook = Workbook()
-            worksheet = workbook.active
-
-            # Write data to the Excel worksheet
-            for row_index, drugbank_id in enumerate(drugbank_ids, start=1):
-                worksheet.cell(row=row_index, column=1, value=drugbank_id)
-
-            # Save the workbook to an Excel file
-            workbook.save("csvToExcel.xlsx")
-            canvas.itemconfigure(showText, text='Converted to csvToExcel.xlsx')
-            canvas.update()
-        except FileNotFoundError:
-            pass
     #option if statement
 
     heading = canvas.create_text(530+10,40,anchor="nw",text='IMPPAT Medicinal',fill="#000000",font=("Roboto Bold", -24))
@@ -196,7 +244,6 @@ def mainApp():
             canvas.itemconfigure(entrytwo, text="")
             entry_1.delete(0, 'end')
             entry_1.insert(0, 'https://cb.imsc.res.in/imppat/phytochemical/')
-            entry_2.delete(0, 'end')
             entry_2.insert(0, '')
             entry_2.config(state='disabled')
             
@@ -204,6 +251,23 @@ def mainApp():
             canvas.itemconfigure(heading, text="Pubchem Library")
             canvas.itemconfigure(heading2, text="Downloads SDF files from PubChem CID.\n[PubChem CID] to [SDF]")
             button_2 = Button(text='Download SDF',command=lambda: dl_pubchem(), fg='white', bg='#3A7FF6', bd=0)
+            button_2.place(x=545,y=412,width=146,height=36)
+            button_1.place(x=545,y=133,width=146,height=36)
+            entry_1.place(x=491,y=209,width=294,height=44)
+            entry_2.place(x=491,y=286,width=294,height=44)
+            csv_button.place_forget()
+            canvas.itemconfigure(entryone, text="Sheet Name")
+            canvas.itemconfigure(entrytwo, text="Column Name containg ID/CID")
+            entry_1.delete(0, 'end')
+            entry_1.insert(0, 'Sheet1')
+            entry_2.config(state='normal')
+            entry_2.delete(0, 'end')
+            entry_2.insert(0, 'A')
+
+        elif option == "imppat-c":
+            canvas.itemconfigure(heading, text="IMPPAT custom")
+            canvas.itemconfigure(heading2, text="Downloads SDF files from IMPPAT by Custom ID.\n[IMPPAT ID] to [SDF]")
+            button_2 = Button(text='Download SDF',command=lambda: dl_imppat_custom(), fg='white', bg='#3A7FF6', bd=0)
             button_2.place(x=545,y=412,width=146,height=36)
             button_1.place(x=545,y=133,width=146,height=36)
             entry_1.place(x=491,y=209,width=294,height=44)
@@ -284,6 +348,8 @@ def mainApp():
     #option0 = Radiobutton(window, text="Select Any Option", value="blankoption", variable=selected_option, command=print(""), fg='#000', bg='white', bd=0)
     #option0.place(x=120,y=132)
     option2 = Radiobutton(window, text="IMPPAT Medicinal [SDF]", value="imppat", variable=selected_option, command=lambda: update_selection(), fg='#000', bg='white', bd=0)
+    option2.place(x=120,y=105)
+    option2 = Radiobutton(window, text="IMPPAT Custom [SDF]", value="imppat-c", variable=selected_option, command=lambda: update_selection(), fg='#000', bg='white', bd=0)
     option2.place(x=120,y=133)
     option1 = Radiobutton(window, text="Swiss Similarity (Drugbank) [SDF]", value="swiss", variable=selected_option, command=lambda: update_selection(), fg='#000', bg='white', bd=0)
     option1.place(x=120,y=161)
@@ -322,7 +388,7 @@ def mainApp():
             canvas.itemconfigure(showText, text='Download Started...')
             canvas.update()
             folder_ext = unquote(sheet.split("/")[-1])
-            os.makedirs('SDF_Imppat_'+folder_ext, exist_ok=True)
+            os.makedirs(working_dir+'/SDF_Imppat_'+folder_ext, exist_ok=True)
             i = 0
             j = 0
             for row in table:
@@ -332,12 +398,12 @@ def mainApp():
                 r = requests.get(URL)
                 r_dl = r.content
                 if r.status_code == 200:
-                    open(f"SDF_Imppat_{folder_ext}/{name}", "wb+").write(r_dl)
+                    open(f"{working_dir}/SDF_Imppat_{folder_ext}/{name}", "wb+").write(r_dl)
                 else:
                     j += 1
                     canvas.itemconfigure(showText, text=f'Failed {j}')
                     canvas.update()
-                    with open(f"failed_imppat_{folder_ext}.txt", "a") as file:
+                    with open(f"{working_dir}/failed_imppat_{folder_ext}.txt", "a") as file:
                         file.write(str(val)+'\n')
                     continue
                 i+=1
@@ -346,14 +412,61 @@ def mainApp():
                
             canvas.itemconfigure(showText, text=f'Download Completed {i} sdf Files & failed {j}')
         except Exception as e:
-            canvas.itemconfigure(showText, text=e)
-            canvas.update()
+            import datetime
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            with open(f"{working_dir}/error.log", "a") as file:
+                file.write(timestamp+'\n'+str(e)+'\n'+50* '='+'\n')
         '''
         except ConnectionError:
             canvas.itemconfigure(showText, text='No Internet Connection')
             canvas.update()
         '''
         #canvas.update()
+
+    def dl_imppat_custom():
+            try:
+                #bl_on()
+                sheet = entry_1.get()
+                column = entry_2.get()
+                worksheet = workbook[sheet]
+                canvas.itemconfigure(showText, text='Download Started...')
+                canvas.update()
+                folder_ext = str(round(time.time()))
+                os.makedirs(working_dir+'/SDF_Imppat_'+folder_ext, exist_ok=True)
+                i = 0
+                j = 0
+                for cell in worksheet[column]:
+                    val = str(cell.value)
+                    URL = f'https://cb.imsc.res.in/imppat/images/3D/SDF/{val}_3D.sdf'
+                    name = URL.split('/')[-1]
+                    r = requests.get(URL)
+                    r_dl = r.content
+                    if r.status_code == 200:
+                        open(f"{working_dir}/SDF_Imppat_{folder_ext}/{name}", "wb+").write(r_dl)
+                    else:
+                        j += 1
+                        canvas.itemconfigure(showText, text=f'Failed {j}')
+                        canvas.update()
+                        with open(f"{working_dir}/failed_imppat.txt", "a") as file:
+                            file.write(str(val)+'\n')
+                        continue
+                    i+=1
+                    canvas.itemconfigure(showText, text=f'{i} sdf file Downloaded')
+                    canvas.update()
+                    
+                    #print(f'{i} sdf file Downloaded')
+                    
+                #bl_off()
+                canvas.itemconfigure(showText, text=f'Download Completed {i} sdf Files.')
+                #bl_off()
+            except NameError:
+                canvas.itemconfigure(showText, text='Excel File not selected')
+                canvas.update()
+            except Exception as e:
+                import datetime
+                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                with open(f"{working_dir}/error.txt", "a") as file:
+                    file.write(timestamp+'\n'+str(e)+'\n'+50* '='+'\n')
     def dl_swiss():
         try:
             sheet = entry_1.get()
@@ -366,7 +479,7 @@ def mainApp():
             canvas.itemconfigure(showText, text='Download Started...')
             canvas.update()
             folder_ext = str(round(time.time()))
-            os.makedirs('SDF_Swiss_'+folder_ext, exist_ok=True)
+            os.makedirs(working_dir+'/SDF_Swiss_'+folder_ext, exist_ok=True)
             i = 0
             j = 0
             for cell in worksheet[column]:
@@ -376,12 +489,12 @@ def mainApp():
                 r = requests.get(URL)
                 r_dl = r.content
                 if r.status_code == 200:
-                    open(f"SDF_Swiss_{folder_ext}/{name}", "wb+").write(r_dl)
+                    open(f"{working_dir}/SDF_Swiss_{folder_ext}/{name}", "wb+").write(r_dl)
                 else:
                     j += 1
                     canvas.itemconfigure(showText, text=f'Failed {j}')
                     canvas.update()
-                    with open(f"failed_swiss.txt", "a") as file:
+                    with open(f"{working_dir}/failed_swiss.txt", "a") as file:
                         file.write(str(val)+'\n')
                     continue
                 i+=1
@@ -405,7 +518,7 @@ def mainApp():
             folder_ext = str(round(time.time()))
             i = 0
             j = 0
-            with open(f"all_smiles_{folder_ext}.txt", "a") as file:
+            with open(f"{working_dir}/all_smiles_{folder_ext}.txt", "a") as file:
                 file.write("\n")
             for cell in worksheet[column]:
                 val = str(cell.value)
@@ -414,13 +527,13 @@ def mainApp():
                 if response.status_code == 200:
                     response_list = response.json()
                     canonical_smiles = response_list["PropertyTable"]["Properties"][0]["CanonicalSMILES"]
-                    with open(f"all_smiles_{folder_ext}.txt", "a") as file:
+                    with open(f"{working_dir}/all_smiles_{folder_ext}.txt", "a") as file:
                         file.write(canonical_smiles + "\n")
                 else:
                     j += 1
                     canvas.itemconfigure(showText, text=f'Failed {j}')
                     canvas.update()
-                    with open(f"failed_smiles.txt", "a") as file:
+                    with open(f"{working_dir}/failed_smiles.txt", "a") as file:
                         file.write(str(val)+'\n')
                     continue
                 i +=1
@@ -441,7 +554,7 @@ def mainApp():
             canvas.update()
             folder_ext = str(round(time.time()))
             base_url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound"
-            os.makedirs('SDF_Pubchem_'+folder_ext, exist_ok=True)
+            os.makedirs(working_dir+'/SDF_Pubchem_'+folder_ext, exist_ok=True)
             i = 0
             j = 0
             for cell in worksheet[column]:
@@ -451,20 +564,20 @@ def mainApp():
                 response_dl = response.content
                 
                 if response.status_code == 200:
-                    with open(f"SDF_Pubchem_{folder_ext}/Conformer3D_CID_{val}.sdf", "wb") as f:
+                    with open(f"{working_dir}/SDF_Pubchem_{folder_ext}/Conformer3D_CID_{val}.sdf", "wb") as f:
                         f.write(response_dl)
                 else:
                     twod = f"{base_url}/cid/{val}/record/SDF/?record_type=2d&response_type=save&response_basename=Conformer2D_CID_{val}"
                     twod_response = requests.get(twod)
                     twod_dl = twod_response.content
                     if twod_response.status_code == 200:
-                        with open(f"SDF_Pubchem_{folder_ext}/Conformer2D_CID_{val}.sdf", "wb") as f:
+                        with open(f"{working_dir}/SDF_Pubchem_{folder_ext}/Conformer2D_CID_{val}.sdf", "wb") as f:
                             f.write(twod_dl)
                     else:
                         j += 1
                         canvas.itemconfigure(showText, text=f'Failed {j}')
                         canvas.update()
-                        with open(f"failed_pubchem.txt", "a") as file:
+                        with open(f"{working_dir}/failed_pubchem.txt", "a") as file:
                             file.write(str(val)+'\n')
                         continue
                 i +=1
@@ -486,7 +599,7 @@ def mainApp():
             canvas.update()
             folder_ext = str(round(time.time()))
             base_url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound"
-            os.makedirs('Smile_to_SDF_'+folder_ext, exist_ok=True)
+            os.makedirs(working_dir+'/Smile_to_SDF_'+folder_ext, exist_ok=True)
             i = 0
             j = 0
             for cell in worksheet[column]:
@@ -498,7 +611,7 @@ def mainApp():
                     j += 1
                     canvas.itemconfigure(showText, text=f'Failed {j}')
                     canvas.update()
-                    with open(f"failed_smileToSdf_{folder_ext}.txt", "a") as file:
+                    with open(f"{working_dir}/failed_smileToSdf_{folder_ext}.txt", "a") as file:
                         file.write(str(val)+'\n\n')
                     continue
                 pub_endpoint = f"{base_url}/cid/{cid}/record/SDF/?record_type=3d&response_type=save&response_basename=Conformer3D_CID_{cid}"
@@ -506,14 +619,14 @@ def mainApp():
                 response_dl = response.content
                 
                 if response.status_code == 200:
-                    with open(f"Smile_to_SDF_{folder_ext}/Conformer3D_CID_{cid}.sdf", "wb") as f:
+                    with open(f"{working_dir}/Smile_to_SDF_{folder_ext}/Conformer3D_CID_{cid}.sdf", "wb") as f:
                         f.write(response_dl)
                 else:
                     twod = f"{base_url}/cid/{cid}/record/SDF/?record_type=2d&response_type=save&response_basename=Conformer2D_CID_{cid}"
                     twod_response = requests.get(twod)
                     twod_dl = twod_response.content
                     if twod_response.status_code == 200:
-                        with open(f"Smile_to_SDF_{folder_ext}/Conformer2D_CID_{cid}.sdf", "wb") as f:
+                        with open(f"{working_dir}/Smile_to_SDF_{folder_ext}/Conformer2D_CID_{cid}.sdf", "wb") as f:
                             f.write(twod_dl)
                     else:
                         continue
@@ -535,7 +648,7 @@ def mainApp():
             canvas.itemconfigure(showText, text='Download Started...')
             canvas.update()
             folder_ext = str(round(time.time()))
-            os.makedirs('2D-Structure_'+folder_ext, exist_ok=True)
+            os.makedirs(working_dir+'/2D-Structure_'+folder_ext, exist_ok=True)
             i = 0
             j = 0
             for cell in worksheet[column]:
@@ -552,13 +665,13 @@ def mainApp():
                 response_dl = response.content
                 
                 if response.status_code == 200:
-                    with open(f"2D-Structure_{folder_ext}/{val}.png", "wb") as f:
+                    with open(f"{working_dir}/2D-Structure_{folder_ext}/{val}.png", "wb") as f:
                         f.write(response_dl)
                 else:
                     j += 1
                     canvas.itemconfigure(showText, text=f'Failed {j}')
                     canvas.update()
-                    with open(f"failed_2D-Structure{folder_ext}.txt", "a") as file:
+                    with open(f"{working_dir}/failed_2D-Structure{folder_ext}.txt", "a") as file:
                         file.write(str(val)+'\n')
                     continue
                 i +=1
@@ -589,13 +702,13 @@ def mainApp():
                 if response.status_code == 200:
                     response_list = response.json()
                     chemical_name = response_list["PropertyTable"]["Properties"][0]["IUPACName"]
-                    with open(f"chemical_names_{folder_ext}.txt", "a") as file:
+                    with open(f"{working_dir}/chemical_names_{folder_ext}.txt", "a") as file:
                         file.write(chemical_name + "\n\n")
                 else:
                     j += 1
                     canvas.itemconfigure(showText, text=f'Failed {j}')
                     canvas.update()
-                    with open(f"failed_chemical_names_{folder_ext}.txt", "a") as file:
+                    with open(f"{working_dir}/failed_chemical_names_{folder_ext}.txt", "a") as file:
                         file.write(str(val)+'\n')
                     continue
                 i +=1
@@ -642,29 +755,31 @@ if os.path.exists(ACTIVATION_FILE):
         ver = canvas_s.create_text(40,380,anchor="nw",text=app_version,fill="#FCFCFC",font=("Actor Regular", -14))
         canvas_s.tag_bind(ver, "<Button-1>", lambda e: callback("https://github.com/sabbir-21/SDF-Protein-CADD"))
         credit = canvas_s.create_text(40,407,anchor="nw",text="Developed by: SABBIR AHMED",fill="#FCFCFC",font=("Actor Regular", -20))
-        canvas_s.tag_bind(credit, "<Button-1>", lambda e: open_popup())
-        canvas_s.tag_bind(credit, "<Button>", lambda e: open_popup())
-        link = canvas_s.create_text(70,446,anchor="nw",text="https://facebook.com/sabbir299",fill="#FFFFFF",font=("Adamina Regular", -15))
-        canvas_s.tag_bind(link, "<Button-1>", lambda e: callback("https://www.facebook.com/sabbir299"))
+        canvas_s.tag_bind(credit, "<Button-1>", lambda e: open_popup("Developer Info",app_dev_about))
+        canvas_s.tag_bind(credit, "<Button>", lambda e: open_popup("Developer Info",app_dev_about))
+        link = canvas_s.create_text(70,446,anchor="nw",text=app_dev_url,fill="#FFFFFF",font=("Adamina Regular", -15))
+        canvas_s.tag_bind(link, "<Button-1>", lambda e: callback(app_dev_url))
         #Right Side
         canvas_s.create_text(482,68.0,anchor="nw",text="Enter Your Licence Key",fill="#505485",font=("Roboto Bold", -24))
         canvas_s.create_text(482,120,anchor="nw",text="Send the Device ID to developer to get licence Key",fill="#505485",font=("Actor Regular", 13 * -1))
         canvas_s.create_text(492,160,anchor="nw",text="Your Device ID",fill="#505485",font=("Actor Regular", -13))
 
-        entry_image_1 = PhotoImage(file=os.path.join(image_folder, 'entry_1.png'))
-        entry_bg_1 = canvas_s.create_image(618,202,image=entry_image_1)
+        #entry_image_1 = PhotoImage(file=os.path.join('entry_1.png'))
+        #entry_bg_1 = canvas_s.create_image(618,202,image=entry_image_1)
         entry_1 = Entry(bd=0,bg="#F1F1F1",fg="#000716",highlightthickness=0)
         entry_1.place(x=491,y=179,width=254,height=44)
         ID = os.getenv('COMPUTERNAME')+'_'+os.getenv('UserName')
         entry_1.insert(0, ID)
 
         canvas_s.create_text(492,266,anchor="nw",text="Licence Key",fill="#505485",font=("Actor Regular", -13))
-        entry_bg_2 = canvas_s.create_image(618,309,image=entry_image_1)
+        #entry_bg_2 = canvas_s.create_image(618,309,image=entry_image_1)
         entry_2 = Entry(bd=0,bg="#F1F1F1",fg="#000716",highlightthickness=0)
         entry_2.place(x=491,y=286,width=254,height=44.0)
 
-        button_image_1 = PhotoImage(file=os.path.join(image_folder, 'button_1.png'))
-        button_1 = Button(image=button_image_1,borderwidth=0,highlightthickness=0,command=lambda: check_activation(),relief="flat")
+        #button_image_1 = PhotoImage(file=os.path.join('button_1.png'))
+        #Button(text='Download SDF', fg='white', bg='#3A7FF6', bd=0)
+        #button_1 = Button(image=button_image_1,borderwidth=0,highlightthickness=0,command=lambda: check_activation(),relief="flat")
+        button_1 = Button(text='Activate', fg='white', bg='#3A7FF6', bd=0,borderwidth=0,highlightthickness=0,command=lambda: check_activation(),relief="flat")
         button_1.place(x=545,y=392,width=146.0,height=36.0)
 
         #copy option of device id
@@ -692,29 +807,29 @@ else:
     ver = canvas_s.create_text(40,380,anchor="nw",text=app_version,fill="#FCFCFC",font=("Actor Regular", -14))
     canvas_s.tag_bind(ver, "<Button-1>", lambda e: callback("https://github.com/sabbir-21/SDF-Protein-CADD"))
     credit = canvas_s.create_text(40,407,anchor="nw",text="Developed by: SABBIR AHMED",fill="#FCFCFC",font=("Actor Regular", -20))
-    canvas_s.tag_bind(credit, "<Button-1>", lambda e: open_popup())
-    canvas_s.tag_bind(credit, "<Button>", lambda e: open_popup())
-    link = canvas_s.create_text(70,446,anchor="nw",text="https://facebook.com/sabbir299",fill="#FFFFFF",font=("Adamina Regular", -15))
-    canvas_s.tag_bind(link, "<Button-1>", lambda e: callback("https://www.facebook.com/sabbir299"))
+    canvas_s.tag_bind(credit, "<Button-1>", lambda e: open_popup("Developer Info",app_dev_about))
+    canvas_s.tag_bind(credit, "<Button>", lambda e: open_popup("Developer Info",app_dev_about))
+    link = canvas_s.create_text(70,446,anchor="nw",text=app_dev_url,fill="#FFFFFF",font=("Adamina Regular", -15))
+    canvas_s.tag_bind(link, "<Button-1>", lambda e: callback(app_dev_url))
     #Right Side
     canvas_s.create_text(482,68,anchor="nw",text="Enter Your Licence Key",fill="#505485",font=("Roboto Bold", -24))
     canvas_s.create_text(482,120,anchor="nw",text="Send the Device ID to developer to get licence Key",fill="#505485",font=("Actor Regular", 13 * -1))
     canvas_s.create_text(492,160,anchor="nw",text="Your Device ID",fill="#505485",font=("Actor Regular", -13))
 
-    entry_image_1 = PhotoImage(file=os.path.join(image_folder, 'entry_1.png'))
-    entry_bg_1 = canvas_s.create_image(618,202,image=entry_image_1)
+    #entry_image_1 = PhotoImage(file=os.path.join('entry_1.png'))
+    #entry_bg_1 = canvas_s.create_image(618,202,image=entry_image_1)
     entry_1 = Entry(bd=0,bg="#F1F1F1",fg="#000716",highlightthickness=0)
     entry_1.place(x=491,y=179,width=254,height=44)
     ID = os.getenv('COMPUTERNAME')+'_'+os.getenv('UserName')
     entry_1.insert(0, ID)
 
     canvas_s.create_text(492,266,anchor="nw",text="Licence Key",fill="#505485",font=("Actor Regular", -13))
-    entry_bg_2 = canvas_s.create_image(618,309,image=entry_image_1)
+    #entry_bg_2 = canvas_s.create_image(618,309,image=entry_image_1)
     entry_2 = Entry(bd=0,bg="#F1F1F1",fg="#000716",highlightthickness=0)
     entry_2.place(x=491,y=286,width=254,height=44)
 
-    button_image_1 = PhotoImage(file=os.path.join(image_folder, 'button_1.png'))
-    button_1 = Button(image=button_image_1,borderwidth=0,highlightthickness=0,command=lambda: check_activation(),relief="flat")
+    #button_image_1 = PhotoImage(file=os.path.join('button_1.png'))
+    button_1 = Button(text='Activate', fg='white', bg='#3A7FF6', bd=0,borderwidth=0,highlightthickness=0,command=lambda: check_activation(),relief="flat")
     button_1.place(x=545,y=392,width=146,height=36)
     #copy option of device id
     def copy_text():
