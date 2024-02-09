@@ -10,27 +10,28 @@ The CADD-Helper is designed to facilitate the download of 3D SDF drug files for 
 - 2D Structure png download by ID (IMPPAT, DrugBank, PubChem)
 - Retrieve Chemical name by PubChem ID
 
-![main_v1.8](v1.8.png)
+![main_v1.9](v1.9.png)
 
 ## Installation
 Download via cmd. Copy the code, paste it on CMD and hit enter. It will be download in Desktop.
 
 ```
-cd Desktop & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.8/CADD_Helper_v1.8.exe
+cd Desktop & curl -OL https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.9/CADD_Helper_v1.9_Portable.exe
 ```
 Or
 
 Download from [Releases](https://github.com/sabbir-21/SDF-Protein-CADD/releases/latest)
 
-[![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/sabbir-21/SDF-Protein-CADD/releases/latest)
+[![Portable](https://img.shields.io/badge/-Portable-blue.svg?style=for-the-badge&logo=windows)](https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.9/CADD_Helper_v1.9_Portable.exe) [![Installer](https://img.shields.io/badge/-Installer-blue.svg?style=for-the-badge&logo=windows)](https://github.com/sabbir-21/SDF-Protein-CADD/releases/download/v1.9/CADD_Helper_v1.9_setup.exe)
 
 [![](https://img.shields.io/github/v/release/sabbir-21/SDF-Protein-CADD?style=for-the-badge)](https://github.com/sabbir-21/SDF-Protein-CADD/releases) [![](https://img.shields.io/github/downloads/sabbir-21/SDF-Protein-CADD/total?style=for-the-badge)](https://github.com/sabbir-21/SDF-Protein-CADD/releases) 
 
-- Its a portable Application. No need to install it. Just double click to run.
+- Both installer and portable version available
 - This application is not free for all. You need to purchase it from me. Purchase licence key from [Buy Now](https://sabbir-21.github.io/portfolio/buy.html)
 
 
 ## Usage
+
 Application startup time is around 5-15 seconds varying on your computer.
 - Enter licence key to activate it lifetime.
 - Choose `Option` from left side.
@@ -50,16 +51,16 @@ Application startup time is around 5-15 seconds varying on your computer.
 
 ## Problems
 
-1. App can't be opened offline. App is fully based on Online. Internet connection problem may `crash` the app. `Re-Opening the app may solve the problem`
-2. Windows defender detects the app as malware. So you have to turn off windows defender while downloading the app. See details [here ](https://stackoverflow.com/questions/43777106/program-made-with-pyinstaller-now-seen-as-a-trojan-horse-by-avg) why this happens.
+1. Windows defender detects the app as malware. So you have to turn off windows defender while downloading the app. See details [here ](https://stackoverflow.com/questions/43777106/program-made-with-pyinstaller-now-seen-as-a-trojan-horse-by-avg) why this happens.
 `Downloading with CMD may solve the problem.`
 
-This problem is solved in version 1.8 here is the virustotal analysis. See details [here ] (https://www.virustotal.com/gui/file/72b779ad95bbd41c77dde24e8fe94c473ca3d5e1f2e68633acbe58d00473c8a7?nocache=1)
+This problem is solved in version 1.9 here is the virustotal analysis. See details [here ] (https://www.virustotal.com/gui/file/72b779ad95bbd41c77dde24e8fe94c473ca3d5e1f2e68633acbe58d00473c8a7?nocache=1)
 
 ## Language
 Built with  [![Windows](https://www.python.org/static/favicon.ico)](https://www.python.org/)
 
 ## License
+Copyright © 2023
 © Sabbir Ahmed
 
 **Paid Software, Yeah!**
